@@ -1,2 +1,2 @@
-# Elevate-Almaprep
-Prep CentOS 7 servers for Elevate process.
+# Elevate-prep
+Prep CentOS/CloudLinux 7 servers for Elevate process.
