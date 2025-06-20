@@ -49,6 +49,91 @@ fi
 cp /etc/yum.repos.d/BitNinja* /root/ELEVATE/repos/
 rm -f /etc/yum.repos.d/BitNinja*
 
+# Remove Blockers : ATrpms
+if rpm -q atrpms-repo > /dev/null; then
+    sudo yum remove atrpms-repo -y
+    echo "ATrpms repo package has been removed."
+else
+    echo "ATrpms repo package is not installed."
+fi
+# Backup and remove ATrpms repo
+if ls /etc/yum.repos.d/atrpms* &>/dev/null; then
+    cp /etc/yum.repos.d/atrpms* /root/ELEVATE/repos/
+    rm -f /etc/yum.repos.d/atrpms*
+    echo "ATrpms repo files backed up and removed."
+else
+    echo "ATrpms repo files not found."
+fi
+
+# Remove Blockers : Wazuh Agent
+if rpm -q wazuh-agent > /dev/null; then
+    sudo systemctl stop wazuh-agent
+    sudo yum remove wazuh-agent -y
+    echo "Wazuh Agent has been removed."
+else
+    echo "Wazuh Agent is not installed."
+fi
+# Backup and remove Wazuh repo
+if ls /etc/yum.repos.d/wazuh* &>/dev/null; then
+    cp /etc/yum.repos.d/wazuh* /root/ELEVATE/repos/
+    rm -f /etc/yum.repos.d/wazuh*
+    echo "Wazuh repo files backed up and removed."
+else
+    echo "Wazuh repo files not found."
+fi
+
+# Remove Blockers : Monarx
+if [ -f /etc/yum.repos.d/monarx.repo ]; then
+    # List and remove all packages installed from the monarx repo
+    MONARX_PKGS=$(yum repo-pkgs monarx list installed | awk '/@monarx/ {print $1}')
+    if [ -n "$MONARX_PKGS" ]; then
+        echo "Removing packages from monarx repo:"
+        echo "$MONARX_PKGS"
+        sudo yum remove -y $MONARX_PKGS
+        echo "Monarx packages removed."
+    else
+        echo "No packages found from monarx repo."
+    fi
+
+    # Backup and remove monarx.repo
+    cp /etc/yum.repos.d/monarx.repo /root/ELEVATE/repos/
+    rm -f /etc/yum.repos.d/monarx.repo
+    echo "monarx.repo backed up and removed."
+else
+    echo "monarx.repo file not found."
+fi
+
+# Remove Blockers : BitNinja Beta
+if [ -f /etc/yum.repos.d/BitNinja.repo ]; then
+    # List and remove all packages from bitninja-beta repo
+    BITNINJA_BETA_PKGS=$(yum repo-pkgs bitninja-beta list installed | awk '/@bitninja-beta/ {print $1}')
+    if [ -n "$BITNINJA_BETA_PKGS" ]; then
+        echo "Removing packages from bitninja-beta repo:"
+        echo "$BITNINJA_BETA_PKGS"
+        sudo yum remove -y $BITNINJA_BETA_PKGS
+        echo "bitninja-beta packages removed."
+    else
+        echo "No packages found from bitninja-beta repo."
+    fi
+
+    # BitNinja.repo already backed up in previous section, so just confirm or skip
+    if [ ! -f /root/ELEVATE/repos/BitNinja.repo ]; then
+        cp /etc/yum.repos.d/BitNinja.repo /root/ELEVATE/repos/
+        echo "BitNinja.repo backed up."
+    fi
+
+    # Remove the repo file only if it's not already removed
+    if [ -f /etc/yum.repos.d/BitNinja.repo ]; then
+        rm -f /etc/yum.repos.d/BitNinja.repo
+        echo "BitNinja.repo removed."
+    fi
+else
+    echo "BitNinja.repo file not found."
+fi
+
+
+
+
 # Remove Acronis Backup for cPanel software
 yum -y remove acronis-backup-cpanel-* -y
 
