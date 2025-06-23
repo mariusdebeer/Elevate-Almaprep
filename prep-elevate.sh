@@ -1,5 +1,5 @@
 #!/bin/bash
-## Title:           almaprep-elevate.sh
+## Title:           prep-elevate.sh
 ## Version:         0.4.1
 ## Description:     Prep servers for CentOS 7 to Almalinux 8 upgrade by removing most / all of the blockers programatically.
 ## Author(s):       Marius de Beer
